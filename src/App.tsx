@@ -6,7 +6,7 @@ const App = () => {
   const [apiData, setApiData] = useState<string>('Czekam na serwer');
 
   useEffect(() => {
-    fetch('')
+    fetch('http://146.59.45.158:8080/test')
       .then(response => response.json())
       .then(data => setApiData(data))
       .catch(error => setApiData(error.toString()));
