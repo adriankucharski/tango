@@ -7,11 +7,9 @@ const App = () => {
 
   useEffect(() => {
     fetch('')
-      .then(response => {
-        if (response.ok)
-          return response.json();
-      })
-      .then(data => setApiData(data));
+      .then(response => response.json())
+      .then(data => setApiData(data))
+      .catch(error => setApiData(error.toString()));
   }, [apiData]);
 
   return (
