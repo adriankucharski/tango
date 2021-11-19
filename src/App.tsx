@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {
+  BrowserRouter as Router,
+  useRoutes
+} from "react-router-dom";
+import Login from './containers/Login';
+import Home from './containers/Home';
+
+const AppRoutes = () => {
+  return useRoutes([
+    { path: '/', element: <Home /> },
+    { path: '/login', element: <Login /> },
+  ]);
+}
 
 const App = () => {
-  const [apiData, setApiData] = useState<string>('Czekam na serwer');
-
-  useEffect(() => {
-    fetch('http://146.59.45.158:8080/test')
-      .then(response => response.json())
-      .then(data => setApiData(data))
-      .catch(error => setApiData(error.toString()));
-  }, [apiData]);
-
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>{apiData}</p>
-      </header>
-    </div>
-  );
+  return <Router>
+    <AppRoutes />
+  </Router>
 }
 
 export default App;
