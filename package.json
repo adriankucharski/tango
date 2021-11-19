@@ -33,7 +33,7 @@
     "tailwindcss": "postcss src/tailwind.css -o src/app_tailwind.css",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "watch:css": "postcss src/styles/tailwind.css -o src/styles/output.css"
+    "watch": "postcss src/tailwind.css -o src/app_tailwind.css --watch"
   },
   "eslintConfig": {
     "extends": [

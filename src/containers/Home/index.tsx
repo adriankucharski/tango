@@ -11,7 +11,7 @@ const Main = () => {
   }, [apiData]);
 
   return (
-    <h1 className="text-sm w-12 hover:text-white">{apiData}</h1>
+    <h1 className="text-sm h-14 w-[300px] hover:text-white">{apiData}</h1>
   );
 }
 

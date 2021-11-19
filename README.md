@@ -7,13 +7,13 @@ You need to install `npm` to run and deploy this project.
 
 Installs npm packages which are required to run the app.
 
-### `npm deploy`
+### `npm run deploy`
 
 Deploys the app directly into the github.
 
 ## In the project directory, you can run:
 
-### `npm start`
+### `npm run start`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -21,7 +21,10 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `npm test`
+### `npm run watch`
+
+Runs the tailwind style in watch mode.\
+Its necessary to run it while you update `className` and add tailwind names in .tsx files. 
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
