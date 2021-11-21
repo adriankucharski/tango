@@ -11,7 +11,9 @@ ReactDOM.render(
   <AuthProvider>
     <React.StrictMode>
       <Navigation />
-      <App />
+      <div className="pt-[56px]">
+        <App />
+      </div>
     </React.StrictMode>
   </AuthProvider>,
   document.getElementById('root')

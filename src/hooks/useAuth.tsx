@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useState, ReactNode, useCallback } from "react";
+import { createContext, useState, ReactNode, useCallback, useEffect } from "react";
 
 const TOKEN_ALS_NAME = 'auth';
 const API_URL = 'https://146.59.45.158:8080';
@@ -26,15 +26,16 @@ const authContextEmpty: AuthContextProps = {
 const AuthContext = createContext(authContextEmpty);
 
 const configureAxiosHeaders = (auth: Auth) => {
-  axios.defaults.headers.post["X-Auth-Token"] = auth.token;
-  axios.defaults.headers.post["X-Auth-Username"] = auth.username;
+  axios.defaults.headers.post["Authorization"] = auth.token;
+  //axios.defaults.headers.post["mode"] = 'cors';
+
+  axios.defaults.headers.get["Authorization"] = auth.token;
+  //axios.defaults.headers.get["mode"] = 'no-cors';
+  axios.defaults.headers.get["Content-Type"] = 'application/x-www-form-urlencoded';
 };
 
 const AuthProvider = ({ children }: Props) => {
-  const [authState, setAuthState] = useState<Auth | null>(() => {
-    const authDataString = localStorage.getItem(TOKEN_ALS_NAME);
-    return authDataString ? JSON.parse(authDataString) : null;
-  });
+  const [authState, setAuthState] = useState<Auth | null>(null);
 
   // Get current auth state from AsyncStorage
   const getAuthState = useCallback(() => {
@@ -66,6 +67,10 @@ const AuthProvider = ({ children }: Props) => {
       setAuthState(null);
       Promise.reject(error);
     }
+  }, []);
+
+  useEffect(() => {
+    getAuthState();
   }, []);
 
   return (

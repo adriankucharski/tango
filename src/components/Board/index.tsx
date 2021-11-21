@@ -1,14 +1,18 @@
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import AddListForm from '../AddListForm';
 import DroppableList from '../DroppableList';
 import Loader from "react-loader-spinner";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import axios from 'axios';
+import { API_URL, AuthContext } from "../../hooks/useAuth";
+import { Toast } from 'react-bootstrap';
 
 type BoardProps = {
 
 };
 
 type BackendBoardColumns = {
+  id: string;
   name: string;
   items: {
     id: string;
@@ -16,29 +20,63 @@ type BackendBoardColumns = {
   }[];
 };
 
+type ToastMsg = {
+  variant: string;
+  message: string;
+}
+
 const Board = ({ }: BoardProps) => {
+  const { authState } = useContext(AuthContext);
   const [columns, setColumns] = useState<BackendBoardColumns[]>([]);
+  const [toastNode, setToastNode] = useState<ToastMsg | null>(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      const arr: BackendBoardColumns[] = [];
-      for (let i = 0; i < 5; ++i)
-        arr.push({
-          name: `Column_${i}`, items: [
-            { id: `${i * 10}`, content: `Content ${i * 10 + i}` }
-          ]
-        });
-      setColumns(arr);
-    }, 1000);
+    const dataGetter = async () => {
+      console.log(axios.defaults.headers);
+      await axios.get(`${API_URL}/board/all`)
+        .then(r => {
+          const { data } = r;
+          setToastNode({
+            variant: 'success',
+            message: `Board loaded`
+          });
+        })
+        .catch(e => {
+          setToastNode({
+            variant: 'danger',
+            message: `${e}`
+          });
+        })
+    }
+    dataGetter();
   }, []);
 
-  const submitFormCallback = (name: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      if (Math.random() <= 0.5)
-        throw "error";
-      setTimeout(() => resolve("done"), 1);
-    });
-  };
+
+
+  const submitFormCallback = useCallback((name: string): Promise<string> =>
+    new Promise(async () => {
+      const body = { name: name }
+      const headers = {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        mode: 'cors'
+      }
+      await axios.post(`${API_URL}/board/all`, body, headers)
+        .then(r => {
+          const { data } = r;
+          setToastNode({
+            variant: 'success',
+            message: `Added new a list: ${name}`
+          });
+        })
+        .catch(e => {
+          setToastNode({
+            variant: 'danger',
+            message: `${e}`
+          });
+        })
+    }), []);
 
   const onDragEnd = useCallback((result) => {
     if (!result.destination) return;
@@ -58,37 +96,41 @@ const Board = ({ }: BoardProps) => {
     setColumns(newColumns);
   }, [columns]);
 
-  const onDragEnd2 = useCallback((result) => {
-
-  }, []);
-
   return (
     <div>
       <div className="flex">
-        {!columns &&
-          <Loader type="Puff"
+        {columns.length > 0 ?
+          <DragDropContext onDragEnd={result => onDragEnd(result)}>
+            {columns.map((column, index) =>
+              <DroppableList key={index} id={column.id} name={column.name} items={column.items} />
+            )}
+          </DragDropContext>
+          :
+          <Loader
+            type="Puff"
             color="#00BFFF"
             height={100}
             width={100}
           />
         }
-        {columns &&
-          <DragDropContext onDragEnd={result => onDragEnd(result)}>
-            {columns.map((column, index) =>
-              <DroppableList key={index} name={column.name} items={column.items} />
-            )}
-          </DragDropContext>
-        }
-
-        <AddListForm
-          openButtonName="+ Add a list"
-          addButtonName="Add list"
-          closeButtonName="Close"
-          placeholder="Enter list title..."
-          submitFormCallback={submitFormCallback}
-          className="w-[272px] m-2"
-          buttonTextColor="text-white"
-        />
+        <div>
+          <AddListForm
+            openButtonName="+ Add a list"
+            addButtonName="Add list"
+            closeButtonName="Close"
+            placeholder="Enter list title..."
+            submitFormCallback={submitFormCallback}
+            className="w-[272px] m-2"
+            buttonTextColor="text-white"
+          />
+          <Toast className="!w-[272px] m-2" bg={toastNode?.variant} onClose={() => setToastNode(null)} show={Boolean(toastNode)} delay={2000} autohide>
+            <Toast.Header>
+              <strong className="me-auto">Status</strong>
+              <small>now</small>
+            </Toast.Header>
+            <Toast.Body>{toastNode?.message}</Toast.Body>
+          </Toast>
+        </div>
       </div>
     </div>
   )

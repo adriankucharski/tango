@@ -5,7 +5,7 @@ import AddListForm from '../AddListForm';
 import { BackendBoardColumns } from '../Board'
 
 
-const DroppableList = ({ name, items }: BackendBoardColumns) => {
+const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
   const [listName, setListName] = useState(name);
   const [clicked, setClicked] = useState(false);
 
@@ -42,7 +42,7 @@ const DroppableList = ({ name, items }: BackendBoardColumns) => {
         }
       </div>
 
-      <Droppable droppableId={name} key={name}>
+      <Droppable droppableId={id} key={`${id}${name}`}>
         {provided =>
           <div
             className="w-[272px] min-h-[30px]"

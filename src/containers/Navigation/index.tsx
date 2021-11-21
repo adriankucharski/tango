@@ -1,15 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import { Container, Form, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import Button from "react-bootstrap/Button";
-import { API_URL, TOKEN_ALS_NAME, AuthContext } from '../../hooks/useAuth'
-import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { Container, Nav, Navbar, } from 'react-bootstrap';
+import { AuthContext } from '../../hooks/useAuth';
+
 
 const Navigation = () => {
   const { authState, setAuth } = useContext(AuthContext);
 
   return (
-    <Navbar bg="light" expand="lg" className="overflow-hidden">
+    <Navbar bg="light" expand="lg" className="overflow-hidden !fixed w-[100%]">
       <Container>
         <Navbar.Brand href="/">Tango</Navbar.Brand>
         {authState ?

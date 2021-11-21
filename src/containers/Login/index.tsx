@@ -41,7 +41,7 @@ const Login = () => {
   useEffect(() => { authState && navigate('/') }, []);
 
   return (
-    <Form onSubmit={submitJWT} className="bg-trello h-[100vh] w-[100vw] flex justify-center flex-col">
+    <Form onSubmit={submitJWT} className="bg-trello h-[100vh] w-[100%] flex justify-center flex-col">
       <div className="w-80 mx-auto my-0 flex flex-col align-middle">
         <Form.Group controlId="username" className="p-2 text-white">
           <Form.Label>Username</Form.Label>
