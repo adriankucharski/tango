@@ -1,21 +1,33 @@
 import {
   BrowserRouter as Router,
+  Route,
+  Routes,
   useRoutes
 } from "react-router-dom";
 import Login from './containers/Login';
 import Home from './containers/Home';
-
-const AppRoutes = () => {
-  return useRoutes([
-    { path: '/', element: <Home /> },
-    { path: '/login', element: <Login /> },
-  ]);
-}
+import { useContext } from "react";
+import { AuthContext } from "./hooks/useAuth";
 
 const App = () => {
-  return <Router>
-    <AppRoutes />
-  </Router>
+  const { authState } = useContext(AuthContext);
+
+  return (
+    <Router>
+      <Routes>
+        {authState ? (
+          <>
+            <Route path='/' element={<Home />} />
+          </>
+        ) : (
+          <>
+            <Route path='/' element={<Home />} />
+            <Route path='/login' element={<Login />} />
+          </>
+        )}
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

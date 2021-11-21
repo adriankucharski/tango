@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import Board from '../../components/Board';
 
 const Main = () => {
   const [apiData, setApiData] = useState<string>('Czekam na serwer');
@@ -10,8 +11,11 @@ const Main = () => {
       .catch(error => setApiData(error.toString()));
   }, [apiData]);
 
+
   return (
-    <h1 className="text-sm h-14 w-[300px] hover:text-white">{apiData}</h1>
+    <main className="bg-trello h-[100vh] w-[fit-content] min-w-full">
+      <Board />
+    </main>
   );
 }
 
