@@ -1,8 +1,7 @@
 import {
   BrowserRouter as Router,
   Route,
-  Routes,
-  useRoutes
+  Routes
 } from "react-router-dom";
 import Login from './containers/Login';
 import Home from './containers/Home';
@@ -11,7 +10,6 @@ import { AuthContext } from "./hooks/useAuth";
 
 const App = () => {
   const { authState } = useContext(AuthContext);
-
   return (
     <Router>
       <Routes>
@@ -21,7 +19,7 @@ const App = () => {
           </>
         ) : (
           <>
-            <Route path='/' element={<Home />} />
+            <Route path='/' element={<Login />} />
             <Route path='/login' element={<Login />} />
           </>
         )}

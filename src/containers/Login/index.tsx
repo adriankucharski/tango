@@ -2,12 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Form } from 'react-bootstrap';
 import Button from "react-bootstrap/Button";
-import { API_URL, AuthContext } from '../../hooks/useAuth'
+import { API_URL, TOKEN_ALS_NAME, AuthContext } from '../../hooks/useAuth'
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const { authState, setAuth } = useContext(AuthContext);
-
   const [status, setStatus] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -15,25 +14,31 @@ const Login = () => {
 
   const submitJWT = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-    setAuth({ username: username, token: 'asd' });
-    try {
-      const { data } = await axios.post(`${API_URL}/login`, {
-        username: username,
-        password: password,
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      setAuth({ username: username, token: data?.token });
-      navigate('/');
-    } catch (e) {
-      setStatus('Error');
+
+    const body = {
+      username: username,
+      password: password,
+    };
+    const headers = {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      mode: 'cors'
     }
+    await axios.post(`${API_URL}/public/login`, body, headers)
+      .then(r => {
+        const { data } = r;
+        localStorage.setItem(TOKEN_ALS_NAME, JSON.stringify(data));
+        setAuth(data);
+        navigate('/');
+      })
+      .catch(e => {
+        setStatus('Username or password are invalid');
+        setAuth(null);
+      });
   };
 
-  if (authState)
-    navigate('/');
+  useEffect(() => { authState && navigate('/') }, []);
 
   return (
     <Form onSubmit={submitJWT} className="bg-trello h-[100vh] w-[100vw] flex justify-center flex-col">
@@ -58,7 +63,7 @@ const Login = () => {
         <Button className="m-4" size="lg" type="submit" disabled={!(username.length > 0 && password.length > 0)}>
           Sign-in
         </Button>
-        <p className="text-center text-red-200">{status}</p>
+        <p className="text-center text-white bg-[#ff000066] rounded-lg">{status}</p>
       </div>
     </Form>
   );

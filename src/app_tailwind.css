@@ -577,18 +577,6 @@ video {
 .h-\[100vh\] {
 	height: 100vh;
 }
-.h-14 {
-	height: 3.5rem;
-}
-.min-h-\[200px\] {
-	min-height: 200px;
-}
-.min-h-\[100px\] {
-	min-height: 100px;
-}
-.min-h-\[50px\] {
-	min-height: 50px;
-}
 .min-h-\[30px\] {
 	min-height: 30px;
 }
@@ -601,9 +589,6 @@ video {
 .w-\[fit-content\] {
 	width: -moz-fit-content;
 	width: fit-content;
-}
-.w-\[300px\] {
-	width: 300px;
 }
 .w-\[100vw\] {
 	width: 100vw;
@@ -620,8 +605,14 @@ video {
 .justify-center {
 	justify-content: center;
 }
+.overflow-hidden {
+	overflow: hidden;
+}
 .rounded-sm {
 	border-radius: 0.125rem;
+}
+.rounded-lg {
+	border-radius: 0.5rem;
 }
 .\!bg-\[\#ffffff3a\] {
 	background-color: #ffffff3a !important;
@@ -633,6 +624,9 @@ video {
 .bg-white {
 	--tw-bg-opacity: 1;
 	background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
+}
+.bg-\[\#ff000066\] {
+	background-color: #ff000066;
 }
 .bg-trello {
 	background-image: url("https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2401x1600/e8108b08fbeb80c41fd27b75044d4587/photo-1635939364889-324dbe6d9cfc.jpg");
@@ -652,10 +646,6 @@ video {
 .align-middle {
 	vertical-align: middle;
 }
-.text-sm {
-	font-size: 0.875rem;
-	line-height: 1.25rem;
-}
 .font-bold {
 	font-weight: 700;
 }
@@ -671,18 +661,6 @@ video {
 	--tw-text-opacity: 1;
 	color: rgba(255, 255, 255, var(--tw-text-opacity));
 }
-.text-red-800 {
-	--tw-text-opacity: 1;
-	color: rgba(153, 27, 27, var(--tw-text-opacity));
-}
-.text-red-200 {
-	--tw-text-opacity: 1;
-	color: rgba(254, 202, 202, var(--tw-text-opacity));
-}
 .hover\:\!bg-\[\#0000009a\]:hover {
 	background-color: #0000009a !important;
-}
-.hover\:text-white:hover {
-	--tw-text-opacity: 1;
-	color: rgba(255, 255, 255, var(--tw-text-opacity));
 }

@@ -41,7 +41,6 @@ const Board = ({ }: BoardProps) => {
   };
 
   const onDragEnd = useCallback((result) => {
-    console.log(result);
     if (!result.destination) return;
     const { source, destination } = result;
     const newColumns = [...columns];

@@ -1,7 +1,5 @@
-import axios, * as Axios from "axios";
-// @ts-ignore
-import { AsyncStorage } from 'AsyncStorage';
-import { createContext, useState, ReactNode, useEffect } from "react";
+import axios from "axios";
+import { createContext, useState, ReactNode, useCallback } from "react";
 
 const TOKEN_ALS_NAME = 'auth';
 const API_URL = 'https://146.59.45.158:8080';
@@ -15,12 +13,14 @@ type Auth = {
 }
 type AuthContextProps = {
   authState: Auth | null;
-  setAuth: (auth: Auth) => Promise<void>;
+  setAuth: (auth: Auth | null) => void;
+  getAuthState: () => Auth | null;
 };
 
 const authContextEmpty: AuthContextProps = {
   authState: null,
-  setAuth: (auth: Auth) => new Promise(() => { })
+  setAuth: (auth: Auth | null) => null,
+  getAuthState: () => null
 }
 
 const AuthContext = createContext(authContextEmpty);
@@ -31,41 +31,45 @@ const configureAxiosHeaders = (auth: Auth) => {
 };
 
 const AuthProvider = ({ children }: Props) => {
-  const [authState, setAuthState] = useState<Auth | null>(null);
+  const [authState, setAuthState] = useState<Auth | null>(() => {
+    const authDataString = localStorage.getItem(TOKEN_ALS_NAME);
+    return authDataString ? JSON.parse(authDataString) : null;
+  });
 
   // Get current auth state from AsyncStorage
-  const getAuthState = async () => {
+  const getAuthState = useCallback(() => {
     try {
-      const authDataString = await AsyncStorage.getItem(TOKEN_ALS_NAME);
-      const authData = JSON.parse(authDataString || null) as Auth;
+      const authDataString = localStorage.getItem(TOKEN_ALS_NAME);
+      if (!authDataString)
+        throw "No data in local storage";
+      const authData = JSON.parse(authDataString) as Auth;
       // Configure axios headers
       configureAxiosHeaders(authData);
       setAuthState(authData);
+
+      return authData;
     } catch (err) {
       setAuthState(null);
     }
-  };
+    return null;
+  }, []);
 
   // Update AsyncStorage & context state
-  const setAuth = async (auth: Auth) => {
+  const setAuth = useCallback((auth: Auth | null) => {
     try {
-      await AsyncStorage.setItem(TOKEN_ALS_NAME, JSON.stringify(auth));
+      localStorage.setItem(TOKEN_ALS_NAME, JSON.stringify(auth));
       // Configure axios headers
-      configureAxiosHeaders(auth);
+      if (auth)
+        configureAxiosHeaders(auth);
       setAuthState(auth);
-      console.log(auth)
     } catch (error) {
       setAuthState(null);
       Promise.reject(error);
     }
-  };
-
-  useEffect(() => {
-    getAuthState();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authState, setAuth }}>
+    <AuthContext.Provider value={{ authState, setAuth, getAuthState }}>
       {children}
     </AuthContext.Provider>
   );
