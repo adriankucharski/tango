@@ -1,13 +1,21 @@
 import React, { ReactNode, useCallback, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Toast } from 'react-bootstrap';
 import AddListForm from '../AddListForm';
 
 import { BackendBoardColumns } from '../Board'
 
 
+type ToastMsg = {
+  variant: string;
+  message: string;
+}
+
 const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
   const [listName, setListName] = useState(name);
   const [clicked, setClicked] = useState(false);
+  const [toastNode, setToastNode] = useState<ToastMsg | null>(null);
+  const [submited, setSubmited] = useState(false);
 
   const submitNameChange = () => {
     console.log(listName)
@@ -15,10 +23,34 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
   }
 
   const submitFormCallback = (name: string): Promise<string> => {
+    if (submited)
+      throw "Another form is submiting";
+    setSubmited(true);
     return new Promise((resolve, reject) => {
-      if (Math.random() <= 0.5)
-        throw "error";
-      setTimeout(() => resolve("done"), 1);
+      setToastNode({
+        variant: 'info',
+        message: `loading`
+      });
+      setTimeout(() => {
+        if (Math.random() <= 0.1) {
+          setToastNode({
+            variant: 'danger',
+            message: `error`
+          });
+          setSubmited(false);
+          throw "error";
+        }
+        items.push({
+          id: `${name} ${(Math.random())}`,
+          content: name,
+        })
+        resolve("done");
+        setToastNode({
+          variant: 'success',
+          message: `Item added`
+        });
+        setSubmited(false);
+      }, 1000);
     });
   };
 
@@ -80,6 +112,13 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
         submitFormCallback={submitFormCallback}
         className="m-2"
       />
+      <Toast className="absolute !w-[272px] my-2" bg={toastNode?.variant} onClose={() => setToastNode(null)} show={Boolean(toastNode)} delay={2000} autohide>
+        <Toast.Header>
+          <strong className="me-auto">Status</strong>
+          <small>now</small>
+        </Toast.Header>
+        <Toast.Body>{toastNode?.message}</Toast.Body>
+      </Toast>
     </div >
   )
 };

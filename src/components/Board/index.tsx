@@ -48,7 +48,22 @@ const Board = ({ }: BoardProps) => {
           });
         })
     }
-    dataGetter();
+    const backendColumns: BackendBoardColumns[] = [];
+    for (let i = 0; i < 4; ++i) {
+      backendColumns.push(
+        {
+          id: `${i}`,
+          name: `Column ${i}`,
+          items: [{
+            id: `${i}`,
+            content: `Row ${i}`
+          }]
+        }
+      );
+    }
+
+    setTimeout(() => setColumns(backendColumns), 1000);
+    // dataGetter();
   }, []);
 
 
@@ -56,13 +71,7 @@ const Board = ({ }: BoardProps) => {
   const submitFormCallback = useCallback((name: string): Promise<string> =>
     new Promise(async () => {
       const body = { name: name }
-      const headers = {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        mode: 'cors'
-      }
-      await axios.post(`${API_URL}/board/all`, body, headers)
+      await axios.post(`${API_URL}/board/all`, body)
         .then(r => {
           const { data } = r;
           setToastNode({
@@ -83,14 +92,14 @@ const Board = ({ }: BoardProps) => {
     const { source, destination } = result;
     const newColumns = [...columns];
     if (source.droppableId !== destination.droppableId) {
-      const sourceColumn = newColumns.find((e: BackendBoardColumns) => e.name === source.droppableId);
-      const destColumn = newColumns.find((e: BackendBoardColumns) => e.name === destination.droppableId);
+      const sourceColumn = newColumns.find((e: BackendBoardColumns) => e.id === source.droppableId);
+      const destColumn = newColumns.find((e: BackendBoardColumns) => e.id === destination.droppableId);
       const destItems = destColumn?.items;
       //@ts-ignore
       const [removed] = sourceColumn.items.splice(source.index, 1);
       destItems?.splice(destination.index, 0, removed);
     } else {
-      const column = newColumns.find((e: BackendBoardColumns) => e.name === source.droppableId);
+      const column = newColumns.find((e: BackendBoardColumns) => e.id === source.droppableId);
       column && ([column.items[source.index], column.items[destination.index]] = [column.items[destination.index], column.items[source.index]]);
     }
     setColumns(newColumns);

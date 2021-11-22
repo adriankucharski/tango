@@ -9,11 +9,11 @@ const Navigation = () => {
   return (
     <Navbar bg="light" expand="lg" className="overflow-hidden !fixed w-[100%]">
       <Container>
-        <Navbar.Brand href="/">Tango</Navbar.Brand>
+        <Navbar.Brand href="/tango">Tango</Navbar.Brand>
         {authState ?
-          <Nav.Link href="/login" onClick={() => setAuth(null)}>Logout</Nav.Link>
+          <Nav.Link href="/tango/login" onClick={() => setAuth(null)}>Logout</Nav.Link>
           :
-          <Nav.Link href="/login">Login</Nav.Link>
+          <Nav.Link href="/tango/login">Login</Nav.Link>
         }
       </Container>
     </Navbar>

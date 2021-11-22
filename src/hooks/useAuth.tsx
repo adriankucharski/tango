@@ -27,11 +27,12 @@ const AuthContext = createContext(authContextEmpty);
 
 const configureAxiosHeaders = (auth: Auth) => {
   axios.defaults.headers.post["Authorization"] = auth.token;
+  axios.defaults.headers.post["Content-Type"] = 'application/json';
   //axios.defaults.headers.post["mode"] = 'cors';
 
   axios.defaults.headers.get["Authorization"] = auth.token;
   //axios.defaults.headers.get["mode"] = 'no-cors';
-  axios.defaults.headers.get["Content-Type"] = 'application/x-www-form-urlencoded';
+  axios.defaults.headers.get["Content-Type"] = 'application/json';
 };
 
 const AuthProvider = ({ children }: Props) => {

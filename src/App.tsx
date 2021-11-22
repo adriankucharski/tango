@@ -15,13 +15,13 @@ const App = () => {
       <Routes>
         {authState ? (
           <>
-            <Route path='/' element={<Home />} />
-            <Route path='/login' element={<Login />} />
+            <Route path='/tango' element={<Home />} />
+            <Route path='/tango/login' element={<Login />} />
           </>
         ) : (
           <>
-            <Route path='/' element={<Login />} />
-            <Route path='/login' element={<Login />} />
+            <Route path='/tango' element={<Login />} />
+            <Route path='/tango/login' element={<Login />} />
           </>
         )}
       </Routes>

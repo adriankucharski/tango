@@ -30,7 +30,7 @@ const Login = () => {
         const { data } = r;
         localStorage.setItem(TOKEN_ALS_NAME, JSON.stringify(data));
         setAuth(data);
-        navigate('/');
+        navigate('/tango');
       })
       .catch(e => {
         setStatus('Username or password are invalid');

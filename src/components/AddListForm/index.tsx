@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useCallback, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import Button from "react-bootstrap/Button";
 
@@ -15,21 +15,20 @@ type AddListButtonProps = {
 const AddListForm = ({ openButtonName, addButtonName, closeButtonName, placeholder, submitFormCallback, className, buttonTextColor }: AddListButtonProps) => {
   const [name, setName] = useState('');
   const [clicked, setClicked] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [submited, setSubmited] = useState(false);
 
   const submitForm = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-    try {
-      await submitFormCallback(name);
-      setClicked(false);
-    } catch (e) {
-      setErrorMsg("Error. Try again.");
-    }
+    await submitFormCallback(name)
+      .then(r => {
+        setClicked(false);
+        setName('');
+      })
+      .catch(e => { });
   };
 
   const setClickedCallback = (state: boolean) => {
     setClicked(state);
-    setErrorMsg(null);
   };
 
   return (
@@ -61,11 +60,6 @@ const AddListForm = ({ openButtonName, addButtonName, closeButtonName, placehold
             <Button className="m-2" size="sm" variant="danger" onClick={() => setClickedCallback(false)}>
               {closeButtonName}
             </Button>
-            {errorMsg &&
-              <Form.Group className="m-2 text-red-500">
-                {errorMsg}
-              </Form.Group>
-            }
           </div>
         )
       }
