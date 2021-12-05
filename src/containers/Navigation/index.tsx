@@ -13,7 +13,7 @@ const Navigation = () => {
         {authState ?
           <Nav.Link href="/tango/login" onClick={() => setAuth(null)}>Logout</Nav.Link>
           :
-          <Nav.Link href="/tango/login">Login</Nav.Link>
+          <Nav.Link href="/tango">Login</Nav.Link>
         }
       </Container>
     </Navbar>
