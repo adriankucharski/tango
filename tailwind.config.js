@@ -6,6 +6,13 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   mode: 'jit',
   theme: {
+    extend: {
+      gridTemplateColumns: {
+        'board-sm': '50% 50%',
+        'board-md': '33% 33% 33%',
+        'board-lg': '25% 25% 25% 25%',
+      }
+    },
     screens: {
       sm: '640px',
       md: '768px',

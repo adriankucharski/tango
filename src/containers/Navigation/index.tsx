@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 import { Container, Nav, Navbar, } from 'react-bootstrap';
-import { AuthContext } from '../../hooks/useAuth';
+import { GlobalContext } from '../../hooks/useGlobalContext';
 
 
 const Navigation = () => {
-  const { authState, setAuth } = useContext(AuthContext);
+  const { authState, setAuth } = useContext(GlobalContext);
 
   return (
     <Navbar bg="light" expand="lg" className="overflow-hidden !fixed w-[100%]">

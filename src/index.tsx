@@ -4,18 +4,18 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './app_tailwind.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import { AuthProvider } from './hooks/useAuth';
+import { ContextProvider } from './hooks/useGlobalContext';
 import Navigation from './containers/Navigation';
 
 ReactDOM.render(
-  <AuthProvider>
+  <ContextProvider>
     <React.StrictMode>
       <Navigation />
       <div className="pt-[56px]">
         <App />
       </div>
     </React.StrictMode>
-  </AuthProvider>,
+  </ContextProvider>,
   document.getElementById('root')
 );
 

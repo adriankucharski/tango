@@ -15,14 +15,13 @@ type AddListButtonProps = {
 const AddListForm = ({ openButtonName, addButtonName, closeButtonName, placeholder, submitFormCallback, className, buttonTextColor }: AddListButtonProps) => {
   const [name, setName] = useState('');
   const [clicked, setClicked] = useState(false);
-  const [submited, setSubmited] = useState(false);
 
   const submitForm = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     await submitFormCallback(name)
       .then(r => {
-        setClicked(false);
         setName('');
+        setClicked(false);
       })
       .catch(e => { });
   };

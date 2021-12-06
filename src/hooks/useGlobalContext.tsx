@@ -1,5 +1,6 @@
 import axios from "axios";
 import { createContext, useState, ReactNode, useCallback, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const TOKEN_ALS_NAME = 'auth';
 const API_URL = 'https://146.59.45.158:8080';
@@ -11,19 +12,19 @@ type Auth = {
   username: string;
   token: string;
 }
-type AuthContextProps = {
+type GlobalContextProps = {
   authState: Auth | null;
   setAuth: (auth: Auth | null) => void;
   getAuthState: () => Auth | null;
 };
 
-const authContextEmpty: AuthContextProps = {
+const GlobalContextEmpty: GlobalContextProps = {
   authState: null,
   setAuth: (auth: Auth | null) => null,
-  getAuthState: () => null
+  getAuthState: () => null,
 }
 
-const AuthContext = createContext(authContextEmpty);
+const GlobalContext = createContext(GlobalContextEmpty);
 
 const configureAxiosHeaders = (auth: Auth) => {
   axios.defaults.headers.post["Authorization"] = auth.token;
@@ -33,9 +34,11 @@ const configureAxiosHeaders = (auth: Auth) => {
   axios.defaults.headers.get["Authorization"] = auth.token;
   //axios.defaults.headers.get["mode"] = 'no-cors';
   axios.defaults.headers.get["Content-Type"] = 'application/json';
+
+  axios.defaults.headers.put["Authorization"] = auth.token;
 };
 
-const AuthProvider = ({ children }: Props) => {
+const ContextProvider = ({ children }: Props) => {
   const [authState, setAuthState] = useState<Auth | null>(null);
 
   // Get current auth state from AsyncStorage
@@ -74,11 +77,13 @@ const AuthProvider = ({ children }: Props) => {
     getAuthState();
   }, []);
 
+
+
   return (
-    <AuthContext.Provider value={{ authState, setAuth, getAuthState }}>
+    <GlobalContext.Provider value={{ authState, setAuth, getAuthState }}>
       {children}
-    </AuthContext.Provider>
+    </GlobalContext.Provider>
   );
 };
 
-export { AuthContext, AuthProvider, TOKEN_ALS_NAME, API_URL };
+export { GlobalContext, ContextProvider, TOKEN_ALS_NAME, API_URL };

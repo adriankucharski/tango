@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Form } from 'react-bootstrap';
 import Button from "react-bootstrap/Button";
-import { API_URL, TOKEN_ALS_NAME, AuthContext } from '../../hooks/useAuth'
+import { API_URL, TOKEN_ALS_NAME, GlobalContext } from '../../hooks/useGlobalContext'
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const { authState, setAuth } = useContext(AuthContext);
+  const { authState, setAuth } = useContext(GlobalContext);
   const [status, setStatus] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -19,13 +19,7 @@ const Login = () => {
       username: username,
       password: password,
     };
-    const headers = {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      mode: 'cors'
-    }
-    await axios.post(`${API_URL}/public/login`, body, headers)
+    await axios.post(`${API_URL}/public/login`, body)
       .then(r => {
         const { data } = r;
         localStorage.setItem(TOKEN_ALS_NAME, JSON.stringify(data));

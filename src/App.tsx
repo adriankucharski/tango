@@ -5,11 +5,12 @@ import {
 } from "react-router-dom";
 import Login from './containers/Login';
 import Home from './containers/Home';
+import WorkBoard from './containers/WorkBoard';
 import { useContext } from "react";
-import { AuthContext } from "./hooks/useAuth";
+import { GlobalContext } from "./hooks/useGlobalContext";
 
 const App = () => {
-  const { authState } = useContext(AuthContext);
+  const { authState } = useContext(GlobalContext);
   return (
     <Router>
       <Routes>
@@ -17,6 +18,7 @@ const App = () => {
           <>
             <Route path='/tango' element={<Home />} />
             <Route path='/tango/login' element={<Login />} />
+            <Route path='/tango/board' element={<WorkBoard />} />
           </>
         ) : (
           <>
