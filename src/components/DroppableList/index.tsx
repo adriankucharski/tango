@@ -22,7 +22,8 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
   const [errMsg, setErrMsg] = useState('');
 
   const [selectedCard, setSelectedCard] = useState<CardContent | null>(null);
-  const [description, setDescription] = useState<string>();
+  const [description, setDescription] = useState<string>('');
+  const [cardName, setCardName] = useState<string>('');
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [boardID, setBoardID] = useState<string | null>(searchParams.get('id'));
@@ -53,37 +54,44 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
       return axios.post(`${API_URL}/board/${boardID}/list/${id}/card`, { name: name, description: '' })
         .then(r => {
           items ? items.push(r.data) : items = r.data;
+          resolve(name);
         })
         .catch(e => {
           setToastNode({
             variant: 'danger',
             message: `Cannot add item`
           });
-        });
+        })
+        .finally(() => setSubmited(false));
     });
   };
 
   const onCloseModal = () => {
     setShow(false);
+    setCardName('');
   };
 
   const openCardModal = (item: CardContent) => {
     setSelectedCard(item);
     setDescription(item.description);
+    setCardName(item.name);
     setShow(true);
   };
 
-  const setDescriptionCallback = async (e: React.SyntheticEvent) => {
+  const setDescriptionCallback = useCallback(async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    await axios.put(`${API_URL}/board/${boardID}/list/${id}/card/${selectedCard?.id}`,
-      {
-        description: description,
-        name: selectedCard?.name,
-      }
-    )
+    const body = {
+      id: selectedCard?.id,
+      description: description,
+      listId: selectedCard?.listId,
+      position: `${selectedCard?.position}`,
+      name: cardName,
+    }
+    await axios.put(`${API_URL}/board/${boardID}/list/${id}/card/${selectedCard?.id}`, body)
       .then(() => {
         if (selectedCard)
           selectedCard.description = description as string;
+        setShow(false);
       })
       .catch(e => {
         setToastNode({
@@ -93,18 +101,21 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
         console.log(e);
         setShow(false);
       });
-  };
+  }, [cardName, description]);
 
-  const submitChangeNameCallback = async (newCardName: string) => {
-    await axios.put(`${API_URL}/board/${boardID}/list/${id}/card/${selectedCard?.id}`,
-      {
-        description: selectedCard?.description,
-        name: newCardName,
-      }
-    )
+  const submitChangeNameCallback = useCallback(async (newCardName: string) => {
+    const body = {
+      description: description,
+      listId: selectedCard?.listId,
+      position: `${selectedCard?.position}`,
+      name: newCardName,
+    }
+    console.log(body, selectedCard);
+    await axios.put(`${API_URL}/board/${boardID}/list/${id}/card/${selectedCard?.id}`, body)
       .then(() => {
         if (selectedCard)
           selectedCard.name = newCardName;
+        setCardName(newCardName);
       })
       .catch(e => {
         setToastNode({
@@ -114,7 +125,7 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
         console.log(e);
         setShow(false);
       });
-  };
+  }, [selectedCard]);
 
   return (
     <div className="w-[272px] bg-[#ebecf0] m-2 h-[fit-content]">
@@ -153,7 +164,7 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
 
       <Modal show={show} onHide={onCloseModal} size="lg" backdrop="static">
         <Modal.Header closeButton>
-          <Modal.Title><TextInput name={selectedCard?.name as string} submitCallback={submitChangeNameCallback} /> </Modal.Title>
+          <Modal.Title><TextInput name={cardName} submitCallback={submitChangeNameCallback} /> </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={setDescriptionCallback}>

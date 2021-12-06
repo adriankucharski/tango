@@ -16,7 +16,6 @@ const TextInput = ({ name, submitCallback, className, buttonClassName, inputClas
   const submitNameChange = useCallback(async () => {
     submitCallback(listName);
     setClicked(false);
-    setListName('');
   }, [listName]);
 
   return (
