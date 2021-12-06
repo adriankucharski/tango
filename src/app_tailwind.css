@@ -553,6 +553,9 @@ video {
 [hidden] {
   display: none;
 }
+.static {
+	position: static;
+}
 .\!fixed {
 	position: fixed !important;
 }
