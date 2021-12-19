@@ -19,11 +19,11 @@ const AddListForm = ({ openButtonName, addButtonName, closeButtonName, placehold
   const submitForm = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     await submitFormCallback(name)
-      .then(r => {
+      .then(() => {
         setName('');
         setClicked(false);
       })
-      .catch(e => { });
+      .catch(() => { });
   };
 
   const setClickedCallback = (state: boolean) => {

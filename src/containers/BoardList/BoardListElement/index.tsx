@@ -1,7 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Loader from 'react-loader-spinner';
+import React from 'react';
 import { BoardType } from '..';
 import Button from "react-bootstrap/Button";
 import { useNavigate } from 'react-router-dom';

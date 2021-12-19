@@ -1,13 +1,15 @@
-import React, { ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AddListForm from '../AddListForm';
 import DroppableList from '../DroppableList';
 import Loader from "react-loader-spinner";
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import axios from 'axios';
-import { API_URL, GlobalContext } from "../../hooks/useGlobalContext";
+import { DragDropContext } from 'react-beautiful-dnd';
+import axios, { AxiosError } from 'axios';
+import { API_URL } from "../../hooks/useGlobalContext";
 import { Toast } from 'react-bootstrap';
 import TextInput from '../TextInput';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Share } from "react-bootstrap-icons";
+import { Button } from "react-bootstrap";
 
 type BoardProps = {
 
@@ -16,8 +18,9 @@ type CardContent = {
   id: number;
   name: string;
   listId: string;
-  position: number;
+  position: string;
   description: string;
+  state: string;
 }
 
 type BackendBoardColumns = {
@@ -40,6 +43,26 @@ const Board = ({ }: BoardProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [boardID, setBoardID] = useState<string | null>(searchParams.get('id'));
   const [boardName, setBoardName] = useState<string | null>(searchParams.get('name'));
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadColumns = useCallback(() => {
+    columns.forEach(async column => {
+      await axios.get(`${API_URL}/board/${boardID}/list/${column.id}/card`)
+        .then(r => {
+          column.items = r.data;
+          column.items?.sort((a, b) => parseInt(a.position) - parseInt(b.position));
+          console.log(column);
+        })
+        .catch((e: AxiosError) => {
+          if (e.response?.status !== 500) {
+            setToastNode({
+              variant: 'danger',
+              message: `${e}`
+            });
+          }
+        });
+    });
+  }, [columns]);
 
 
   useEffect(() => {
@@ -47,44 +70,27 @@ const Board = ({ }: BoardProps) => {
   }, []);
 
   useEffect(() => {
-    const dataList = async () => {
-      await axios.get(`${API_URL}/board/${boardID}/list`)
-        .then(r => {
-          const { data } = r;
-          setColumns(data);
-          setToastNode({
-            variant: 'success',
-            message: `Board loaded`
-          });
-        })
-        .catch(e => {
-          setToastNode({
-            variant: 'danger',
-            message: `${e}`
-          });
-        })
-    };
-    dataList();
+    axios.get(`${API_URL}/board/${boardID}/list`)
+      .then(r => {
+        const { data } = r;
+        setColumns(data);
+        setIsLoading(false);
+        setToastNode({
+          variant: 'success',
+          message: `Board loaded`
+        });
+      })
+      .catch(e => {
+        setToastNode({
+          variant: 'danger',
+          message: `${e}`
+        });
+      });
   }, []);
 
   useEffect(() => {
-    const dataCard = () => {
-      columns.forEach(async column => {
-        await axios.get(`${API_URL}/board/${boardID}/list/${column.id}/card`)
-          .then(r => {
-            column.items = r.data;
-            console.log(r.data)
-          })
-          .catch(e => {
-            setToastNode({
-              variant: 'danger',
-              message: `${e}`
-            });
-          });
-      });
-    };
-    dataCard();
-  }, [columns]);
+    loadColumns();
+  }, [isLoading]);
 
   const submitFormCallback = useCallback((name: string): Promise<string> =>
     new Promise(async () => {
@@ -106,23 +112,51 @@ const Board = ({ }: BoardProps) => {
         })
     }), [columns]);
 
-  const onDragEnd = useCallback((result) => {
-    if (!result.destination) return;
+
+  const backendUpdateColumn = (column: BackendBoardColumns) => {
+    if (!column.items)
+      return;
+    column.items.forEach((el, idx) => el.position = `${idx + 1}`);
+    column.items.sort((a, b) => parseInt(a.position) - parseInt(b.position));
+
+    column.items.forEach(async el => {
+      await axios.put(`${API_URL}/board/${boardID}/list/${el.listId}/card/${el.id}`, el)
+        .catch(e => console.log(e));
+    });
+  };
+
+  const onDragEnd = useCallback(async (result) => {
+    if (!result.destination)
+      return;
+
     const { source, destination } = result;
     const newColumns = [...columns];
-    if (source.droppableId !== destination.droppableId) {
-      const sourceColumn = newColumns.find((e: BackendBoardColumns) => e.id === source.droppableId);
-      const destColumn = newColumns.find((e: BackendBoardColumns) => e.id === destination.droppableId);
+
+    if (source.droppableId === destination.droppableId) {
+      const column = newColumns.find((e: BackendBoardColumns) => `${e.id}` === source.droppableId);
+      if (column && column.items) {
+        const [removed] = column.items.splice(source.index, 1);
+        column.items.splice(destination.index, 0, removed);
+        backendUpdateColumn(column);
+      }
+    }
+    else {
+      const sourceColumn = newColumns.find((e: BackendBoardColumns) => `${e.id}` === source.droppableId);
+      const destColumn = newColumns.find((e: BackendBoardColumns) => `${e.id}` === destination.droppableId);
+      const sourceItems = sourceColumn?.items;
       const destItems = destColumn?.items;
-      //@ts-ignore
-      const [removed] = sourceColumn.items.splice(source.index, 1);
-      destItems?.splice(destination.index, 0, removed);
-    } else {
-      const column = newColumns.find((e: BackendBoardColumns) => e.id === source.droppableId);
-      column && column.items && ([column.items[source.index], column.items[destination.index]] = [column.items[destination.index], column.items[source.index]]);
+
+      if (sourceItems && destItems) {
+        const [removed] = sourceItems.splice(source.index, 1);
+        removed.listId = `${destColumn?.id}`;
+        destItems.splice(destination.index, 0, removed);
+
+        backendUpdateColumn(destColumn);
+        backendUpdateColumn(sourceColumn);
+      }
     }
     setColumns(newColumns);
-  }, [columns]);
+  }, [isLoading]);
 
   const submitNameChange = useCallback(async (newName: string) => {
     await axios.put(`${API_URL}/board`, { name: newName }, { params: { id: `${boardID}` } })
@@ -140,23 +174,31 @@ const Board = ({ }: BoardProps) => {
       });
   }, []);
 
+  const shareBoardClick = () => {
+    console.log(1);
+  };
+
   return (
     <div>
-      <TextInput name={boardName as string} submitCallback={submitNameChange} className="w-[fit-content]" buttonClassName="text-xl text-white" />
+      <div className='flex flex-row items-center'>
+        <TextInput name={boardName as string} submitCallback={submitNameChange} className="w-[fit-content]" buttonClassName="text-xl text-white" />
+        <Button variant="link" onClick={shareBoardClick}>
+          <Share color='white' width={25} height={25} />
+        </Button>
+      </div>
       <div className="flex">
-        {columns.length > 0 ?
-          <DragDropContext onDragEnd={result => onDragEnd(result)}>
-            {columns.map((column, index) =>
-              <DroppableList key={index} id={column.id} name={column.name} position={column.position} items={column.items} />
-            )}
-          </DragDropContext>
-          :
+        {isLoading ?
           <Loader
             type="Puff"
             color="#00BFFF"
             height={100}
             width={100}
-          />
+          /> :
+          <DragDropContext onDragEnd={result => onDragEnd(result)}>
+            {columns.map((column, index) =>
+              <DroppableList key={index} id={column.id} name={column.name} position={column.position} items={column.items} />
+            )}
+          </DragDropContext>
         }
         <div>
           <AddListForm

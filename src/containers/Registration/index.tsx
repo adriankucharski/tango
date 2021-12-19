@@ -3,36 +3,43 @@ import axios from 'axios';
 import { Form } from 'react-bootstrap';
 import Button from "react-bootstrap/Button";
 import { API_URL, TOKEN_ALS_NAME, GlobalContext } from '../../hooks/useGlobalContext'
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Registration = () => {
   const { authState, setAuth } = useContext(GlobalContext);
   const [status, setStatus] = useState('');
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [matchingPassword, setMatchingPassword] = useState('');
   const navigate = useNavigate();
+  const isButtonDisabled = !(username.length && email.length && password.length && matchingPassword.length);
+  useEffect(() => setAuth(null), []);
 
   const submitJWT = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
+    if (password !== matchingPassword) {
+      setStatus('Passwords are incorrect');
+      return;
+    }
+
     const body = {
       username: username,
+      email: email,
       password: password,
+      matchingPassword: matchingPassword,
     };
-    await axios.post(`${API_URL}/public/login`, body)
+    await axios.post(`${API_URL}/public/register`, body)
       .then(r => {
-        const { data } = r;
-        localStorage.setItem(TOKEN_ALS_NAME, JSON.stringify(data));
-        setAuth(data);
-        navigate('/tango');
+        navigate('/tango/login');
       })
       .catch(e => {
-        setStatus('Username or password are invalid');
+        setStatus('Cannot create account');
         setAuth(null);
       });
   };
 
-  useEffect(() => { authState && navigate('/') }, []);
 
   return (
     <Form onSubmit={submitJWT} className="bg-trello h-[100vh] w-[100%] flex justify-center flex-col">
@@ -46,6 +53,15 @@ const Login = () => {
             onChange={(e) => setUsername(e.target.value)}
           />
         </Form.Group>
+        <Form.Group controlId="email" className="p-2 text-white">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            autoFocus
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Form.Group>
         <Form.Group controlId="password" className="p-2 text-white">
           <Form.Label>Password</Form.Label>
           <Form.Control
@@ -54,18 +70,21 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button className="m-4" size="lg" type="submit" disabled={!(username.length > 0 && password.length > 0)}>
-          Sign-in
+        <Form.Group controlId="matchingPassword" className="p-2 text-white">
+          <Form.Label>Repeat password</Form.Label>
+          <Form.Control
+            type="password"
+            value={matchingPassword}
+            onChange={(e) => setMatchingPassword(e.target.value)}
+          />
+        </Form.Group>
+        <Button className="m-4" size="lg" type="submit" disabled={isButtonDisabled}>
+          Create account
         </Button>
         <p className="text-center text-white bg-[#ff000066] rounded-lg">{status}</p>
-        <Link to="/tango/registration" className='text-center'>
-          <Button className="m-4" size="sm" variant="secondary">
-            Create new account
-          </Button>
-        </Link>
       </div>
     </Form>
   );
 }
 
-export default Login;
+export default Registration;

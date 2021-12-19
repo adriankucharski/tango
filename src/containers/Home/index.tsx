@@ -1,8 +1,7 @@
 
-import React, { useEffect, useState } from 'react';
-import Board from '../../components/Board';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { API_URL, TOKEN_ALS_NAME, GlobalContext } from '../../hooks/useGlobalContext'
+import { API_URL } from '../../hooks/useGlobalContext'
 import Loader from 'react-loader-spinner';
 import BoardsList, { BoardType } from '../BoardList';
 
@@ -16,7 +15,10 @@ const Main = () => {
         const { data } = r;
         setBoards(data);
       })
-      .catch(e => console.log(e));
+      .catch(e => {
+        console.log(e);
+        setBoards([]);
+      });
   }, []);
 
   console.log(boards);

@@ -1,14 +1,13 @@
-import axios from 'axios';
-import React, { ReactNode, useCallback, useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Form, Modal, Toast } from 'react-bootstrap';
+import axios, { AxiosError } from 'axios';
+import React, { useCallback, useState } from 'react';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
+import { Toast } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
 import { API_URL } from '../../hooks/useGlobalContext';
 import AddListForm from '../AddListForm';
-
 import { BackendBoardColumns, CardContent } from '../Board'
 import TextInput from '../TextInput';
-import Button from "react-bootstrap/Button";
+import CardModal from '../CardModal';
 
 type ToastMsg = {
   variant: string;
@@ -30,9 +29,6 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
 
   const submitNameChange = async (newName: string) => {
     await axios.post(`${API_URL}/board/${id}/list`, { name: newName })
-      .then(r => {
-        console.log(r.data)
-      })
       .catch(e => {
         setToastNode({
           variant: 'danger',
@@ -46,14 +42,16 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
     if (submited)
       throw "Another form is submiting";
     setSubmited(true);
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       setToastNode({
         variant: 'info',
         message: `loading`
       });
-      return axios.post(`${API_URL}/board/${boardID}/list/${id}/card`, { name: name, description: '' })
+      const body = { name: name, description: '' };
+      return axios.post(`${API_URL}/board/${boardID}/list/${id}/card`, body)
         .then(r => {
           items ? items.push(r.data) : items = r.data;
+          items = items?.sort((a, b) => parseInt(a.position) - parseInt(b.position));
           resolve(name);
         })
         .catch(e => {
@@ -84,8 +82,9 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
       id: selectedCard?.id,
       description: description,
       listId: selectedCard?.listId,
-      position: `${selectedCard?.position}`,
+      position: selectedCard?.position,
       name: cardName,
+      state: selectedCard?.state,
     }
     await axios.put(`${API_URL}/board/${boardID}/list/${id}/card/${selectedCard?.id}`, body)
       .then(() => {
@@ -103,26 +102,54 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
       });
   }, [cardName, description]);
 
-  const submitChangeNameCallback = useCallback(async (newCardName: string) => {
+  const submitChangeDescriptionCallback = useCallback(async (newDescription: string) => {
+    if (newDescription === selectedCard?.description)
+      return;
+
     const body = {
-      description: description,
+      name: selectedCard?.name,
       listId: selectedCard?.listId,
-      position: `${selectedCard?.position}`,
-      name: newCardName,
+      position: selectedCard?.position,
+      description: newDescription,
+      state: selectedCard?.state,
     }
-    console.log(body, selectedCard);
+    await axios.put(`${API_URL}/board/${boardID}/list/${id}/card/${selectedCard?.id}`, body)
+      .then(() => {
+        if (selectedCard)
+          selectedCard.description = newDescription;
+        setDescription(newDescription);
+      })
+      .catch((e: AxiosError) => {
+        setToastNode({
+          variant: 'danger',
+          message: `Cannot set description`
+        });
+        setShow(false);
+      });
+  }, [selectedCard]);
+
+  const submitChangeNameCallback = useCallback(async (newCardName: string) => {
+    if (newCardName === selectedCard?.name)
+      return;
+
+    const body = {
+      name: newCardName,
+      listId: selectedCard?.listId,
+      position: selectedCard?.position,
+      description: description,
+      state: selectedCard?.state,
+    }
     await axios.put(`${API_URL}/board/${boardID}/list/${id}/card/${selectedCard?.id}`, body)
       .then(() => {
         if (selectedCard)
           selectedCard.name = newCardName;
         setCardName(newCardName);
       })
-      .catch(e => {
+      .catch((e: AxiosError) => {
         setToastNode({
           variant: 'danger',
           message: `Cannot set description`
         });
-        console.log(e);
         setShow(false);
       });
   }, [selectedCard]);
@@ -130,7 +157,6 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
   return (
     <div className="w-[272px] bg-[#ebecf0] m-2 h-[fit-content]">
       <TextInput name={name} submitCallback={submitNameChange} />
-
       <Droppable droppableId={`${id}`} key={`${id}${name}`}>
         {provided =>
           <div
@@ -144,7 +170,7 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
                 draggableId={`${item.id}`}
                 index={index}
               >
-                {(provided, snapshot) =>
+                {(provided) =>
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
@@ -162,31 +188,18 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
         }
       </Droppable>
 
-      <Modal show={show} onHide={onCloseModal} size="lg" backdrop="static">
-        <Modal.Header closeButton>
-          <Modal.Title><TextInput name={cardName} submitCallback={submitChangeNameCallback} /> </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={setDescriptionCallback}>
-            <Form.Group className="mb-3">
-              <Form.Control
-                value={description}
-                as="textarea" placeholder="Add card description"
-                onChange={(e) => setDescription(e.currentTarget.value)}
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              Save
-            </Button>
-          </Form>
-          {errMsg && <p className="text-red-500 pt-2 m-0">{errMsg}</p>}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={onCloseModal}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <CardModal
+        show={show}
+        cardName={cardName}
+        description={description}
+        card={selectedCard}
+        errMsg={errMsg}
+        onCloseModal={onCloseModal}
+        submitChangeNameCallback={submitChangeNameCallback}
+        submitChangeDescriptionCallback={submitChangeDescriptionCallback}
+        setDescriptionCallback={setDescriptionCallback}
+        setDescription={setDescription}
+      />
 
       <AddListForm
         openButtonName="+ Add another card"

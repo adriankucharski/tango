@@ -1,8 +1,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
-import { API_URL, TOKEN_ALS_NAME, GlobalContext } from '../../hooks/useGlobalContext'
-import Loader from 'react-loader-spinner';
+import { API_URL } from '../../hooks/useGlobalContext'
 import BoardsListElement from './BoardListElement';
 import Button from "react-bootstrap/Button";
 import { Form, Modal } from 'react-bootstrap';
@@ -60,11 +59,6 @@ const BoardsList = ({ boards }: BoardsListProps) => {
           </Form>
           {errMsg && <p className="text-red-500 pt-2 m-0">{errMsg}</p>}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={onCloseModal}>
-            Close
-          </Button>
-        </Modal.Footer>
       </Modal>
     </div>
   );
