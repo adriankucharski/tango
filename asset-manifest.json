@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/tango/static/css/main.bbac9bb7.chunk.css",
-    "main.js": "/tango/static/js/main.70c6de13.chunk.js",
-    "main.js.map": "/tango/static/js/main.70c6de13.chunk.js.map",
+    "main.js": "/tango/static/js/main.f114593b.chunk.js",
+    "main.js.map": "/tango/static/js/main.f114593b.chunk.js.map",
     "runtime-main.js": "/tango/static/js/runtime-main.e4c0977a.js",
     "runtime-main.js.map": "/tango/static/js/runtime-main.e4c0977a.js.map",
     "static/css/2.383c0125.chunk.css": "/tango/static/css/2.383c0125.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.383c0125.chunk.css",
     "static/js/2.21615d99.chunk.js",
     "static/css/main.bbac9bb7.chunk.css",
-    "static/js/main.70c6de13.chunk.js"
+    "static/js/main.f114593b.chunk.js"
   ]
 }
