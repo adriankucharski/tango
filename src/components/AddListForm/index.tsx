@@ -35,7 +35,7 @@ const AddListForm = ({ openButtonName, addButtonName, closeButtonName, placehold
       {!clicked ?
         (
           <button
-            className={`!bg-[#ffffff3a] hover:!bg-[#0000009a] btn w-[100%] text-gray-200 ${buttonTextColor}`}
+            className={`!bg-[#ffffff3a] hover:!bg-[#0000009a] btn w-[100%]  ${buttonTextColor}`}
             onClick={() => setClickedCallback(true)}
           >
             {openButtonName}

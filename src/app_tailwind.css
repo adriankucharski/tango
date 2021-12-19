@@ -693,10 +693,6 @@ video {
 .bg-\[\#ff000066\] {
 	background-color: #ff000066;
 }
-.bg-\[\#97a0af\] {
-	--tw-bg-opacity: 1;
-	background-color: rgba(151, 160, 175, var(--tw-bg-opacity));
-}
 .bg-trello {
 	background-image: url("https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2401x1600/e8108b08fbeb80c41fd27b75044d4587/photo-1635939364889-324dbe6d9cfc.jpg");
 }

@@ -10,7 +10,7 @@ const BoardsListElement = ({ id, name }: BoardType) => {
         navigate(`/tango/board?id=${id}&name=${name}`);
     };
     return (
-        <Button onClick={buttonElementHandler} className="h-[80px] bg-[#97a0af]">
+        <Button onClick={buttonElementHandler} className="h-[80px]">
             {name}
         </Button>
     );
