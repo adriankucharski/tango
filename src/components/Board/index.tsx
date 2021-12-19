@@ -9,7 +9,7 @@ import { API_URL } from "../../hooks/useGlobalContext";
 import AddListForm from '../AddListForm';
 import DroppableList from '../DroppableList';
 import TextInput from '../TextInput';
-
+import { useParams } from "react-router-dom";
 
 type BoardProps = {
 
@@ -40,12 +40,11 @@ const Board = ({ }: BoardProps) => {
   const [columns, setColumns] = useState<BackendBoardColumns[]>([]);
   const [toastNode, setToastNode] = useState<ToastMsg | null>(null);
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [boardID, setBoardID] = useState<string | null>(searchParams.get('id'));
-  const [boardName, setBoardName] = useState<string | null>(searchParams.get('name'));
   const [isLoading, setIsLoading] = useState(true);
   const [inviteUsername, setInviteUsername] = useState('');
   const [inviteStatus, setInvateStatus] = useState<ToastMsg | null>(null);
+
+  const { boardID, boardName } = useParams();
 
   const loadColumns = useCallback(() => {
     columns.forEach(async column => {
@@ -164,9 +163,7 @@ const Board = ({ }: BoardProps) => {
   const submitNameChange = useCallback(async (newName: string) => {
     await axios.put(`${API_URL}/board`, { name: newName }, { params: { id: `${boardID}` } })
       .then(() => {
-        const params = new URLSearchParams(`id=${boardID}&name=${newName}`);
-        window.history.replaceState(null, '', `board?${params.toString()}`);
-        setBoardName(newName);
+        window.history.replaceState(null, '', `/tango/board/${boardID}/${newName}`);
       })
       .catch(e => {
         setToastNode({

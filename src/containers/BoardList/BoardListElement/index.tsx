@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const BoardsListElement = ({ id, name }: BoardType) => {
     const navigate = useNavigate();
     const buttonElementHandler = (e: React.SyntheticEvent) => {
-        navigate(`/tango/board?id=${id}&name=${name}`);
+        navigate(`/tango/board/${id}/${name}`);
     };
     return (
         <Button onClick={buttonElementHandler} className="h-[80px]">

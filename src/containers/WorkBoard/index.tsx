@@ -1,7 +1,4 @@
-
-import React, { useEffect } from 'react';
 import Board from '../../components/Board';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const WorkBoard = () => {
 

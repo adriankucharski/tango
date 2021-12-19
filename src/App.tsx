@@ -19,7 +19,7 @@ const App = () => {
           <>
             <Route path='/tango' element={<Home />} />
             <Route path='/tango/login' element={<Login />} />
-            <Route path='/tango/board' element={<WorkBoard />} />
+            <Route path='/tango/board/:boardID/:boardName' element={<WorkBoard />} />
             <Route path='/tango/registration' element={<Registration />} />
           </>
         ) : (
