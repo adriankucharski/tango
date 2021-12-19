@@ -28,14 +28,14 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
   const [boardID, setBoardID] = useState<string | null>(searchParams.get('id'));
 
   const submitNameChange = async (newName: string) => {
-    await axios.post(`${API_URL}/board/${id}/list`, { name: newName })
-      .catch(e => {
-        setToastNode({
-          variant: 'danger',
-          message: `Cannot change the name`
-        });
-        console.log(e);
-      });
+    // await axios.post(`${API_URL}/board/${boardID}/list`, { name: newName })
+    //   .catch(e => {
+    //     setToastNode({
+    //       variant: 'danger',
+    //       message: `Cannot change the name`
+    //     });
+    //     console.log(e);
+    //   });
   };
 
   const submitFormCallback = (name: string): Promise<string> => {
@@ -43,15 +43,16 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
       throw "Another form is submiting";
     setSubmited(true);
     return new Promise((resolve) => {
-      setToastNode({
-        variant: 'info',
-        message: `loading`
-      });
       const body = { name: name, description: '' };
       return axios.post(`${API_URL}/board/${boardID}/list/${id}/card`, body)
         .then(r => {
           items ? items.push(r.data) : items = r.data;
           items = items?.sort((a, b) => parseInt(a.position) - parseInt(b.position));
+
+          setToastNode({
+            variant: 'success',
+            message: `Item added`
+          });
           resolve(name);
         })
         .catch(e => {
@@ -193,6 +194,7 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
         cardName={cardName}
         description={description}
         card={selectedCard}
+        boardID={boardID}
         errMsg={errMsg}
         onCloseModal={onCloseModal}
         submitChangeNameCallback={submitChangeNameCallback}
