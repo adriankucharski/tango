@@ -13,7 +13,7 @@ const WorkBoard = () => {
       .then(r => {
         const data: BoardType[] = r.data;
         if (!data.some(el => `${el.id}` === boardID && el.name === boardName))
-          navigate('/tango');
+          navigate('/');
       });
   }, []);
 

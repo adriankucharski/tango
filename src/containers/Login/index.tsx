@@ -24,7 +24,7 @@ const Login = () => {
         const { data } = r;
         localStorage.setItem(TOKEN_ALS_NAME, JSON.stringify(data));
         setAuth(data);
-        navigate('/tango');
+        navigate('/');
       })
       .catch(e => {
         setStatus('Username or password are invalid');
@@ -58,7 +58,7 @@ const Login = () => {
           Sign-in
         </Button>
         <p className="text-center text-white bg-[#ff000066] rounded-lg">{status}</p>
-        <Link to="/tango/registration" className='text-center'>
+        <Link to="/registration" className='text-center'>
           <Button className="m-4" size="sm" variant="secondary">
             Create new account
           </Button>

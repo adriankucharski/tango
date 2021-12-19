@@ -32,7 +32,7 @@ const Registration = () => {
     };
     await axios.post(`${API_URL}/public/register`, body)
       .then(r => {
-        navigate('/tango/login');
+        navigate('/login');
       })
       .catch(e => {
         setStatus('Cannot create account');

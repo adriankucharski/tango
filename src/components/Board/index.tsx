@@ -67,7 +67,7 @@ const Board = ({ }: BoardProps) => {
 
 
   useEffect(() => {
-    (!boardID && !boardName) && navigate('/tango');
+    (!boardID && !boardName) && navigate('/');
   }, []);
 
   useEffect(() => {
@@ -163,7 +163,7 @@ const Board = ({ }: BoardProps) => {
   const submitNameChange = useCallback(async (newName: string) => {
     await axios.put(`${API_URL}/board`, { name: newName }, { params: { id: `${boardID}` } })
       .then(() => {
-        window.history.replaceState(null, '', `/tango/board/${boardID}/${newName}`);
+        window.history.replaceState(null, '', `/board/${boardID}/${newName}`);
       })
       .catch(e => {
         setToastNode({
