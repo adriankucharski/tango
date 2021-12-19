@@ -40,6 +40,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
+    "serv": "postcss src/tailwind.css -o src/app_tailwind.css && react-scripts build && serve -s build",
     "tailwindcss": "postcss src/tailwind.css -o src/app_tailwind.css",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",

@@ -187,31 +187,33 @@ const Board = ({ }: BoardProps) => {
 
 
   const inviteBoardDropdown =
-    <Dropdown >
+    <Dropdown>
       <Dropdown.Toggle variant="light" className='after:!hidden'>
         <div className="flex flex-row items-center">
           <Share color='black' width={25} height={25} />
           <span className='text-black ml-2'>Invite</span>
         </div>
       </Dropdown.Toggle>
-      <Dropdown.Menu variant="light" className="w-72 flex justify-center">
-        <div className="text-center w-[100%]">Invite to board</div>
-        <Dropdown.Divider />
+      <Dropdown.Menu variant="light" className="w-72 ">
+        <div className='flex justify-center flex-col'>
+          <div className="text-center w-[100%]">Invite to board</div>
+          <Dropdown.Divider />
 
-        <Form onSubmit={inviteFormSubmit} className="p-2 flex flex-col gap-6">
-          <Form.Control type="text" placeholder='Insert username' value={inviteUsername} onChange={e => setInviteUsername(e.target.value)} />
-          <Button className="w-[100%]" variant={inviteUsername ? "primary" : "light"} type="submit" disabled={inviteUsername.length === 0}>
-            Send invitation
-          </Button>
-        </Form>
+          <Form onSubmit={inviteFormSubmit} className="p-2 flex flex-col gap-6">
+            <Form.Control type="text" placeholder='Insert username' value={inviteUsername} onChange={e => setInviteUsername(e.target.value)} />
+            <Button className="w-[100%]" variant={inviteUsername ? "primary" : "light"} type="submit" disabled={inviteUsername.length === 0}>
+              Send invitation
+            </Button>
+          </Form>
 
-        <Toast className="m-2 !w-[272px]" bg={inviteStatus?.variant} onClose={() => setInvateStatus(null)} show={Boolean(inviteStatus)} delay={2000} autohide>
-          <Toast.Header>
-            <strong className="me-auto">Status</strong>
-            <small>now</small>
-          </Toast.Header>
-          <Toast.Body>{inviteStatus?.message}</Toast.Body>
-        </Toast>
+          <Toast className="m-2 !w-[272px]" bg={inviteStatus?.variant} onClose={() => setInvateStatus(null)} show={Boolean(inviteStatus)} delay={2000} autohide>
+            <Toast.Header>
+              <strong className="me-auto">Status</strong>
+              <small>now</small>
+            </Toast.Header>
+            <Toast.Body>{inviteStatus?.message}</Toast.Body>
+          </Toast>
+        </div>
       </Dropdown.Menu>
     </Dropdown>;
 
@@ -219,7 +221,9 @@ const Board = ({ }: BoardProps) => {
     <div>
       <div className='flex flex-row items-center p-2'>
         <TextInput name={boardName as string} submitCallback={submitNameChange} className="w-[fit-content]" buttonClassName="text-xl text-white" />
-        {inviteBoardDropdown}
+        <div>
+          {inviteBoardDropdown}
+        </div>
       </div>
       <div className="flex">
         {isLoading ?
