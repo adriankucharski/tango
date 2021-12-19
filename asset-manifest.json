@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/tango/static/css/main.bbac9bb7.chunk.css",
-    "main.js": "/tango/static/js/main.cd1b8ea3.chunk.js",
-    "main.js.map": "/tango/static/js/main.cd1b8ea3.chunk.js.map",
+    "main.js": "/tango/static/js/main.9c5a7c9b.chunk.js",
+    "main.js.map": "/tango/static/js/main.9c5a7c9b.chunk.js.map",
     "runtime-main.js": "/tango/static/js/runtime-main.e4c0977a.js",
     "runtime-main.js.map": "/tango/static/js/runtime-main.e4c0977a.js.map",
     "static/css/2.383c0125.chunk.css": "/tango/static/css/2.383c0125.chunk.css",
-    "static/js/2.baf87911.chunk.js": "/tango/static/js/2.baf87911.chunk.js",
-    "static/js/2.baf87911.chunk.js.map": "/tango/static/js/2.baf87911.chunk.js.map",
+    "static/js/2.f448ae19.chunk.js": "/tango/static/js/2.f448ae19.chunk.js",
+    "static/js/2.f448ae19.chunk.js.map": "/tango/static/js/2.f448ae19.chunk.js.map",
     "static/js/3.24ebff2e.chunk.js": "/tango/static/js/3.24ebff2e.chunk.js",
     "static/js/3.24ebff2e.chunk.js.map": "/tango/static/js/3.24ebff2e.chunk.js.map",
     "index.html": "/tango/index.html",
     "static/css/2.383c0125.chunk.css.map": "/tango/static/css/2.383c0125.chunk.css.map",
     "static/css/main.bbac9bb7.chunk.css.map": "/tango/static/css/main.bbac9bb7.chunk.css.map",
-    "static/js/2.baf87911.chunk.js.LICENSE.txt": "/tango/static/js/2.baf87911.chunk.js.LICENSE.txt"
+    "static/js/2.f448ae19.chunk.js.LICENSE.txt": "/tango/static/js/2.f448ae19.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.e4c0977a.js",
     "static/css/2.383c0125.chunk.css",
-    "static/js/2.baf87911.chunk.js",
+    "static/js/2.f448ae19.chunk.js",
     "static/css/main.bbac9bb7.chunk.css",
-    "static/js/main.cd1b8ea3.chunk.js"
+    "static/js/main.9c5a7c9b.chunk.js"
   ]
 }
