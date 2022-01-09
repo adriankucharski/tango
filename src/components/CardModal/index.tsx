@@ -6,6 +6,8 @@ import { Bookmark, BodyText, Archive, Trash } from "react-bootstrap-icons";
 import { CardContent } from '../Board';
 import axios from 'axios';
 import { API_URL } from '../../hooks/useGlobalContext';
+import Comments from '../Comments';
+import { useParams } from 'react-router-dom';
 
 
 type CardModalProps = {
@@ -14,7 +16,6 @@ type CardModalProps = {
   readonly description: string;
   readonly card: CardContent | null;
   readonly errMsg: string;
-  readonly boardID: string | null;
 
   onCloseModal: () => void;
   submitChangeNameCallback: (newCardName: string) => Promise<void>;
@@ -29,15 +30,14 @@ const CardModal = ({
   cardName,
   card,
   errMsg,
-  boardID,
   onCloseModal,
   submitChangeNameCallback,
   submitChangeDescriptionCallback,
   setDescriptionCallback,
   setDescription,
 }: CardModalProps) => {
+  const { boardID } = useParams();
   let isSubmitting = false;
-
   const stateRequest = async (body: CardContent) => {
     if (!isSubmitting) {
       isSubmitting = true;
@@ -96,6 +96,7 @@ const CardModal = ({
               </Button>
             </Form>
           }
+          <Comments commentRequestURL={`${API_URL}/board/${boardID}/list/${card?.listId}/card/${card?.id}/comment`} />
         </div>
         <div className="w-[20%] flex flex-col gap-2">
           <span className="font-bold">Actions</span>

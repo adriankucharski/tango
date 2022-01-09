@@ -1,6 +1,5 @@
 import axios from "axios";
 import { createContext, useState, ReactNode, useCallback, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
 
 const TOKEN_ALS_NAME = 'auth';
 const API_URL = 'https://146.59.45.158:8080';

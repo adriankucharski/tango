@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import React, { useCallback, useState } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { Toast } from 'react-bootstrap';
-import { useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { API_URL } from '../../hooks/useGlobalContext';
 import AddListForm from '../AddListForm';
 import { BackendBoardColumns, CardContent } from '../Board'
@@ -24,8 +24,7 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
   const [description, setDescription] = useState<string>('');
   const [cardName, setCardName] = useState<string>('');
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [boardID, setBoardID] = useState<string | null>(searchParams.get('id'));
+  const { boardID, boardName } = useParams();
 
   const submitNameChange = async (newName: string) => {
     // await axios.post(`${API_URL}/board/${boardID}/list`, { name: newName })
@@ -194,7 +193,6 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
         cardName={cardName}
         description={description}
         card={selectedCard}
-        boardID={boardID}
         errMsg={errMsg}
         onCloseModal={onCloseModal}
         submitChangeNameCallback={submitChangeNameCallback}

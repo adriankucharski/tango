@@ -4,7 +4,7 @@ import { DragDropContext } from 'react-beautiful-dnd';
 import { Button, Toast, Dropdown, Form } from 'react-bootstrap';
 import { Share } from "react-bootstrap-icons";
 import Loader from "react-loader-spinner";
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { API_URL } from "../../hooks/useGlobalContext";
 import AddListForm from '../AddListForm';
 import DroppableList from '../DroppableList';
@@ -52,7 +52,6 @@ const Board = ({ }: BoardProps) => {
         .then(r => {
           column.items = r.data;
           column.items?.sort((a, b) => parseInt(a.position) - parseInt(b.position));
-          console.log(column);
         })
         .catch((e: AxiosError) => {
           if (e.response?.status !== 500) {

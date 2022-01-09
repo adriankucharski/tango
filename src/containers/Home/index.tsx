@@ -21,8 +21,6 @@ const Main = () => {
       });
   }, []);
 
-  console.log(boards);
-
   return (
     <main className="bg-trello h-[100vh] w-[fit-content] min-w-full">
       {boards === null ? <Loader type="Puff" /> : <BoardsList boards={boards} />}
