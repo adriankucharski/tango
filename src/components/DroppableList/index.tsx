@@ -45,6 +45,21 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
     //   });
   };
 
+  const waiter = async () => {
+    if (!items)
+      return;
+    setLabelsLine([]);
+    setIsLoading(true);
+    const ll: React.ReactNode[] = [];
+    for (let i = 0; i < items?.length; ++i) {
+      const e = items[i];
+      const l = await labelsComponent(e.listId, e.id);
+      ll.push(l);
+    }
+    setIsLoading(false);
+    setLabelsLine(ll);
+  }
+
   const submitFormCallback = (name: string): Promise<string> => {
     if (submited)
       throw "Another form is submiting";
@@ -75,6 +90,7 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
   const onCloseModal = () => {
     setShow(false);
     setCardName('');
+    waiter();
   };
 
   const openCardModal = (item: CardContent) => {
@@ -180,20 +196,6 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
   }
 
   useEffect(() => {
-    const waiter = async () => {
-      if (!items)
-        return;
-      setLabelsLine([]);
-      setIsLoading(true);
-      const ll: React.ReactNode[] = [];
-      for (let i = 0; i < items?.length; ++i) {
-        const e = items[i];
-        const l = await labelsComponent(e.listId, e.id);
-        ll.push(l);
-      }
-      setIsLoading(false);
-      setLabelsLine(ll);
-    }
     waiter();
   }, [items]);
 
