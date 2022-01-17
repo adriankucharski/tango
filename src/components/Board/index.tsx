@@ -177,11 +177,13 @@ const Board = ({ }: BoardProps) => {
     e.preventDefault();
     if (inviteUsername.length === 0)
       return;
-    const body = { username: inviteUsername };
     setInviteUsername('');
-    await axios.post(`${API_URL}/board/${boardID}/invite`, body)
+    await axios.post(`${API_URL}/board/${boardID}/invite?username=${inviteUsername}`)
       .then(() => setInvateStatus({ variant: 'success', message: 'Invitation was sent' }))
-      .catch((e: AxiosError) => setInvateStatus({ variant: 'danger', message: 'Error, invitation was not sent. Try again' }));
+      .catch((e: AxiosError) => {
+        console.log(e);
+        setInvateStatus({ variant: 'danger', message: 'Error, invitation was not sent. Try again' })
+      });
   };
 
 

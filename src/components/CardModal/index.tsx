@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Form, Modal } from 'react-bootstrap';
 import TextInput from '../TextInput';
 import Button from "react-bootstrap/Button";
-import { Bookmark, BodyText, Archive, Trash } from "react-bootstrap-icons";
+import { Bookmark, BodyText, Archive, Trash, Tags } from "react-bootstrap-icons";
 import { CardContent } from '../Board';
 import axios from 'axios';
 import { API_URL } from '../../hooks/useGlobalContext';
 import Comments from '../Comments';
 import { useParams } from 'react-router-dom';
+import CardTags from '../CardTags';
 
 
 type CardModalProps = {
@@ -75,6 +76,9 @@ const CardModal = ({
       </Modal.Header>
       <Modal.Body className="flex gap-3">
         <div className="w-[80%]">
+          <CardTags
+            tagsRequestURL={`${API_URL}/board/${boardID}/list/${card?.listId}/card/${card?.id}/label`}
+          />
           <div className='flex flex-row w-[100%] items-center text-xl'>
             <BodyText width={24} height={24} />
             <span className='p-2'>Description</span>

@@ -35,6 +35,7 @@ const configureAxiosHeaders = (auth: Auth) => {
   axios.defaults.headers.get["Content-Type"] = 'application/json';
 
   axios.defaults.headers.put["Authorization"] = auth.token;
+  axios.defaults.headers.delete["Authorization"] = auth.token;
 };
 
 const ContextProvider = ({ children }: Props) => {

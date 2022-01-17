@@ -66,9 +66,11 @@
   },
   "devDependencies": {
     "@types/react-beautiful-dnd": "^13.1.2",
+    "@types/styled-components": "^5.1.20",
     "autoprefixer": "^9.8.8",
     "postcss": "^8.3.11",
     "postcss-cli": "^9.0.2",
+    "styled-components": "^5.3.3",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17"
   }
 }

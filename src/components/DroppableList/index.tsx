@@ -8,6 +8,7 @@ import AddListForm from '../AddListForm';
 import { BackendBoardColumns, CardContent } from '../Board'
 import TextInput from '../TextInput';
 import CardModal from '../CardModal';
+import { resolve } from 'dns';
 
 type ToastMsg = {
   variant: string;
@@ -154,6 +155,19 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
       });
   }, [selectedCard]);
 
+  const LabelsComponent = async (item: CardContent) => {
+    let component = <div></div>;
+    const url = `${API_URL}/board/${boardID}/list/${item.listId}/card/${item.id}`;
+    await axios.get(url)
+      .then(r => {
+        const { data } = r;
+        component = (<div>
+        </div>);
+      })
+      .catch(e => console.log(e));
+    return component;
+  }
+
   return (
     <div className="w-[272px] bg-[#ebecf0] m-2 h-[fit-content]">
       <TextInput name={name} submitCallback={submitNameChange} />
@@ -164,8 +178,9 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            {items?.map((item, index) =>
-              <Draggable
+            {items?.map((item, index) => {
+              console.log(item);
+              return <Draggable
                 key={item.id}
                 draggableId={`${item.id}`}
                 index={index}
@@ -182,6 +197,7 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
                   </div>
                 }
               </Draggable>
+            }
             )}
             {provided.placeholder}
           </div>
