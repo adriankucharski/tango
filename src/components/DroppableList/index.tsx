@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { Toast } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
@@ -14,9 +14,16 @@ type ToastMsg = {
   variant: string;
   message: string;
 }
+type TagsData = {
+  id: number,
+  content: string,
+  color: string,
+};
 
 const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
   const [toastNode, setToastNode] = useState<ToastMsg | null>(null);
+  const [labelsLine, setLabelsLine] = useState<React.ReactNode[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [submited, setSubmited] = useState(false);
   const [show, setShow] = useState(false);
   const [errMsg, setErrMsg] = useState('');
@@ -155,23 +162,45 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
       });
   }, [selectedCard]);
 
-  const LabelsComponent = async (item: CardContent) => {
+  const labelsComponent = async (listId: string, id: number) => {
+    const url = `${API_URL}/board/${boardID}/list/${listId}/card/${id}/label`;
     let component = <div></div>;
-    const url = `${API_URL}/board/${boardID}/list/${item.listId}/card/${item.id}`;
     await axios.get(url)
       .then(r => {
         const { data } = r;
-        component = (<div>
-        </div>);
+        component = (
+          <div className='flex flex-row flex-wrap gap-x-2 gap-y-1'>
+            {data.map((e: TagsData, index: number) => (
+              <span key={index} className='h-2 w-10 rounded-md' style={{ backgroundColor: e.color }}>
+              </span>))}
+          </div>);
       })
       .catch(e => console.log(e));
     return component;
   }
 
+  useEffect(() => {
+    const waiter = async () => {
+      if (!items)
+        return;
+      setLabelsLine([]);
+      setIsLoading(true);
+      const ll: React.ReactNode[] = [];
+      for (let i = 0; i < items?.length; ++i) {
+        const e = items[i];
+        const l = await labelsComponent(e.listId, e.id);
+        ll.push(l);
+      }
+      setIsLoading(false);
+      setLabelsLine(ll);
+    }
+    waiter();
+  }, [items]);
+
   return (
     <div className="w-[272px] bg-[#ebecf0] m-2 h-[fit-content]">
       <TextInput name={name} submitCallback={submitNameChange} />
-      <Droppable droppableId={`${id}`} key={`${id}${name}`}>
+      {!isLoading && <Droppable droppableId={`${id}`} key={`${id}${name}`}>
         {provided =>
           <div
             className="w-[272px] min-h-[30px]"
@@ -179,7 +208,6 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
             ref={provided.innerRef}
           >
             {items?.map((item, index) => {
-              console.log(item);
               return <Draggable
                 key={item.id}
                 draggableId={`${item.id}`}
@@ -193,7 +221,8 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
                     onClick={() => openCardModal(item)}
                     className="bg-white rounded-sm m-2 p-3"
                   >
-                    {item.name}
+                    {labelsLine[index]}
+                    <div>{item.name}</div>
                   </div>
                 }
               </Draggable>
@@ -202,7 +231,7 @@ const DroppableList = ({ id, name, items }: BackendBoardColumns) => {
             {provided.placeholder}
           </div>
         }
-      </Droppable>
+      </Droppable>}
 
       <CardModal
         show={show}

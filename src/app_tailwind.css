@@ -643,6 +643,9 @@ video {
 .h-\[100vh\] {
 	height: 100vh;
 }
+.h-2 {
+	height: 0.5rem;
+}
 .min-h-\[30px\] {
 	min-height: 30px;
 }
@@ -676,6 +679,9 @@ video {
 }
 .w-80 {
 	width: 20rem;
+}
+.w-10 {
+	width: 2.5rem;
 }
 .min-w-full {
 	min-width: 100%;
@@ -712,6 +718,12 @@ video {
 }
 .gap-2 {
 	gap: 0.5rem;
+}
+.gap-x-2 {
+	column-gap: 0.5rem;
+}
+.gap-y-1 {
+	row-gap: 0.25rem;
 }
 .overflow-hidden {
 	overflow: hidden;

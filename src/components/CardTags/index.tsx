@@ -35,6 +35,7 @@ type TagDropdownMenuProps = {
 
 const TagDropdownMenu = ({ tags, setTags, tagsRequestURL }: TagDropdownMenuProps) => {
   const [labels, setLabels] = useState<TagsData[]>([]);
+  const [tagsTemp, setTagsTemp] = useState<TagsData[]>([...tags]);
   const { boardID } = useParams();
   const [disableCheckbox, setDisableCheckbox] = useState(false);
   const [selectedColor, setSelectedColor] = useState("#61bd4f");
@@ -43,16 +44,12 @@ const TagDropdownMenu = ({ tags, setTags, tagsRequestURL }: TagDropdownMenuProps
   const colors = ["#61bd4f", "#f2d600", "#ff9f1a", "#eb5a46", "#c377e0",
     "#0079bf", "#00c2e0", "#51e898", "#ff78cb", "#344563"];
 
+
   const getLabels = async () => {
     await axios.get(`${API_URL}/board/${boardID}/labels`)
       .then(r => {
         const { data } = r;
-        const filteredLabels = tags.filter(
-          e => data.some(
-            (k: TagsData) => e.color === k.color && e.content === k.content
-          )
-        );
-        setLabels(filteredLabels);
+        setLabels(data);
       })
       .catch(e => console.log(e));
   };
@@ -69,7 +66,7 @@ const TagDropdownMenu = ({ tags, setTags, tagsRequestURL }: TagDropdownMenuProps
       .then(r => {
         const { data } = r;
         setLabels([...labels, data]);
-        setTags([...tags, data]);
+        setTagsTemp([...tagsTemp, data]);
       })
       .catch(e => console.log(e));
   };
@@ -77,20 +74,30 @@ const TagDropdownMenu = ({ tags, setTags, tagsRequestURL }: TagDropdownMenuProps
 
   const LabelElem = ({ content, color, id }: TagsData) => {
     const onCheckClick = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      console.log(content, color, id)
       setDisableCheckbox(true);
       const body = { id: id, content: content, color: color };
       if (e.target.checked) {
         await axios.post(`${tagsRequestURL}`, body)
-          .then(() => setTags([...tags, body]))
+          .then(() => {
+            setTags([...tags, body]);
+            setTagsTemp([...tagsTemp, body]);
+          })
           .catch(e => console.log(e))
           .finally(() => setDisableCheckbox(false));
       }
       else {
-        await axios.delete(`${tagsRequestURL}/${id}`)
-          .then(() => setTags(tags.filter(e => e.id !== id)))
-          .catch(e => console.log(e))
-          .finally(() => setDisableCheckbox(false));
+        await axios.get(tagsRequestURL)
+          .then(async (r) => {
+            const { data } = r;
+            const el = data.find((e: TagsData) => e.content === content && e.color === color);
+            await axios.delete(`${tagsRequestURL}/${el?.id}`)
+              .then(() => {
+                setTagsTemp(data.filter((e: TagsData) => e.id !== el?.id))
+                setTags(data.filter((e: TagsData) => e.id !== el?.id));
+              })
+              .catch(e => console.log(e))
+              .finally(() => setDisableCheckbox(false));
+          });
       }
     }
 
@@ -104,7 +111,7 @@ const TagDropdownMenu = ({ tags, setTags, tagsRequestURL }: TagDropdownMenuProps
       >{content}</Button>
       <FormCheck
         disabled={disableCheckbox}
-        defaultChecked={tags.some(el => el.color === color && el.content === content)}
+        defaultChecked={tagsTemp.some(el => el.color === color && el.content === content)}
         onChange={onCheckClick}
       ></FormCheck>
     </div>
@@ -134,7 +141,7 @@ const TagDropdownMenu = ({ tags, setTags, tagsRequestURL }: TagDropdownMenuProps
           <div className="flex flex-row flex-wrap gap-2 items-center justify-center mb-2">
             {colors.map((color, idx) =>
               <div
-                key={color}
+                key={idx}
                 className="w-12 h-8 rounded-md" style={{ backgroundColor: color }}>
                 <input
                   value={color}
@@ -196,12 +203,12 @@ const CardTags = ({ tagsRequestURL }: Props) => {
       </div>
       <div className="flex flex-row gap-2 flex-wrap items-center text-xl">
         {loaded && tags.map(
-          tag =>
+          (tag, index) =>
             <Tag
               dropdownmenu={dropdownMenu}
               content={tag.content}
               color={tag.color}
-              key={tag.id}
+              key={index}
             />
         )}
         {loaded &&
